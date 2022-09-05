@@ -9,18 +9,27 @@ export default class MusicCard extends Component {
 
   };
 
-  handleClick = async (music) => {
+  handleChange = async (music) => {
+    const { gotFavorites } = this.props;
     this.setState({
       isLoading: true,
     });
     await addSong(music);
+    await gotFavorites();
     this.setState({
       isLoading: false,
     });
   };
 
   render() {
-    const { trackName, previewUrl, trackId, music } = this.props;
+    const {
+      trackName,
+      previewUrl,
+      trackId,
+      music,
+      receivedFavorites,
+    } = this.props;
+
     const { isLoading } = this.state;
     return (
       <div>
@@ -35,10 +44,14 @@ export default class MusicCard extends Component {
         </audio>
         <label htmlFor={ trackId }>
           <input
-            onClick={ () => this.handleClick(music) }
+            onChange={ () => this.handleChange(music) }
             id={ trackId }
             type="checkbox"
             data-testid={ `checkbox-music-${trackId}` }
+            checked={
+              receivedFavorites
+                .some((favorite) => favorite.trackId === music.trackId)
+            }
           />
           Favorita
 
@@ -53,4 +66,6 @@ MusicCard.propTypes = {
   previewUrl: PropTypes.string.isRequired,
   trackId: PropTypes.number.isRequired,
   music: PropTypes.shape(Object).isRequired,
+  receivedFavorites: PropTypes.arrayOf(Object).isRequired,
+  gotFavorites: PropTypes.func.isRequired,
 };

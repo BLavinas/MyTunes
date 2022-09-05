@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../Components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../Components/MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   state = {
@@ -10,6 +11,7 @@ class Album extends React.Component {
     receivedBand: '',
     receivedAlbum: '',
     receivedCover: '',
+    receivedFavorites: [],
   };
 
   async componentDidMount() {
@@ -24,10 +26,24 @@ class Album extends React.Component {
       receivedBand: artistName,
       receivedCover: artworkUrl100,
     });
+    await this.gotFavorites();
   }
 
+  gotFavorites = async () => {
+    const favoriteSongs = await getFavoriteSongs();
+    this.setState({
+      receivedFavorites: favoriteSongs,
+    });
+  };
+
   render() {
-    const { receivedMusics, receivedAlbum, receivedBand, receivedCover } = this.state;
+    const {
+      receivedMusics,
+      receivedAlbum,
+      receivedBand,
+      receivedCover,
+      receivedFavorites,
+    } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
@@ -43,6 +59,8 @@ class Album extends React.Component {
             trackName={ music.trackName }
             previewUrl={ music.previewUrl }
             trackId={ music.trackId }
+            receivedFavorites={ receivedFavorites }
+            gotFavorites={ this.gotFavorites }
           />))}
 
       </div>
