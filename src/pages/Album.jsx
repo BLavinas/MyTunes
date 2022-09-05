@@ -34,6 +34,7 @@ class Album extends React.Component {
     this.setState({
       receivedFavorites: favoriteSongs,
     });
+    console.log(favoriteSongs);
   };
 
   render() {
@@ -54,8 +55,8 @@ class Album extends React.Component {
         </div>
         {receivedMusics.map((music) => (
           <MusicCard
-            music={ music }
             key={ music.trackId }
+            music={ music }
             trackName={ music.trackName }
             previewUrl={ music.previewUrl }
             trackId={ music.trackId }
