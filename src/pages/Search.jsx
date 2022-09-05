@@ -5,16 +5,14 @@ import searchAlbumsAPI from '../services/searchAlbumsAPI';
 import Loading from './Loading';
 
 class Search extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      isBtnDisabled: true,
-      searchAlbum: '',
-      isLoading: false,
-      artistFound: [],
-      inputAlbum: '',
-    };
-  }
+  state = {
+    isBtnDisabled: true,
+    searchAlbum: '',
+    isLoading: false,
+    artistFound: [],
+    requestedAlbum: '',
+
+  };
 
   handleChange = ({ target }) => {
     const { name, value } = target;
@@ -23,84 +21,95 @@ class Search extends React.Component {
     }, () => {
       const { searchAlbum } = this.state;
       const minInputName = 2;
-      if (searchAlbum.length >= minInputName) {
-        this.setState({
-          isBtnDisabled: false,
-        });
-      } else {
-        this.setState({
-          isBtnDisabled: true,
-        });
-      }
+      this.setState({
+        isBtnDisabled: searchAlbum.length < minInputName,
+      });
+      // // Refatorado
+      //  if (searchAlbum.length >= minInputName) {
+      //   this.setState({
+      //     isBtnDisabled: false,
+      //   });
+      // } else {
+      //   this.setState({
+      //     isBtnDisabled: true,
+      //   });
+      // }
     });
   };
 
   handleClick = async () => {
     const { searchAlbum } = this.state;
     this.setState({
-      inputAlbum: searchAlbum,
+      requestedAlbum: searchAlbum,
       searchAlbum: '',
       isLoading: true,
     });
-    const responseApi = await searchAlbumsAPI(searchAlbum);
+    const artistFound = await searchAlbumsAPI(searchAlbum);
     this.setState({
-      artistFound: responseApi,
+      artistFound,
       isLoading: false,
     });
   };
 
   render() {
-    const { isBtnDisabled, searchAlbum, isLoading, artistFound, inputAlbum } = this.state;
+    const {
+      isBtnDisabled,
+      searchAlbum,
+      isLoading,
+      artistFound,
+      requestedAlbum,
+    } = this.state;
 
     return (
 
       <div data-testid="page-search">
         <Header />
-        {(isLoading
-
-          ? <Loading />
-          : (
-            <form>
-              <label htmlFor="searchAlbum">
-                <input
-                  name="searchAlbum"
-                  onChange={ this.handleChange }
-                  type="text"
-                  data-testid="search-artist-input"
-                  value={ searchAlbum }
-                />
-              </label>
-              <button
-                type="button"
-                onClick={ this.handleClick }
-                disabled={ isBtnDisabled }
-                data-testid="search-artist-button"
-              >
-                Pesquisar
-              </button>
-            </form>
-          ))}
+        {(isLoading ? <Loading /> : (
+          <form>
+            <label htmlFor="searchAlbum">
+              <input
+                name="searchAlbum"
+                onChange={ this.handleChange }
+                type="text"
+                data-testid="search-artist-input"
+                value={ searchAlbum }
+              />
+            </label>
+            <button
+              type="button"
+              onClick={ this.handleClick }
+              disabled={ isBtnDisabled }
+              data-testid="search-artist-button"
+            >
+              Pesquisar
+            </button>
+          </form>
+        ))}
         <div>
           {
             artistFound.length === 0
-            && inputAlbum !== ''
+            && requestedAlbum !== ''
             && <p>Nenhum álbum foi encontrado</p>
           }
           {(artistFound.length > 0
             && (
               <div>
                 <h3>
-                  {`Resultado de álbuns de: ${inputAlbum}`}
+                  {`Resultado de álbuns de: ${requestedAlbum}`}
                 </h3>
                 {
                   artistFound.map((album) => (
-                    <Link
-                      key={ album.collectionId }
-                      to={ `/album/${album.collectionId}` }
-                      data-testid={ `link-to-album-${album.collectionId}` }
-                    >
-                      {album.collectionName}
-                    </Link>
+                    <div key={ album.collectionId }>
+                      <Link
+                        to={ `/album/${album.collectionId}` }
+                        data-testid={ `link-to-album-${album.collectionId}` }
+                      >
+                        {album.collectionName}
+                        <div>
+                          <img src={ album.artworkUrl100 } alt={ album.collectionName } />
+                        </div>
+                      </Link>
+                    </div>
                   ))
                 }
               </div>

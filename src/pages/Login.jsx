@@ -16,6 +16,7 @@ class Login extends React.Component {
 
   handleChange = ({ target }) => {
     const { name, value } = target;
+    console.log(target);
     this.setState({
       [name]: value,
     }, () => {
@@ -48,6 +49,7 @@ class Login extends React.Component {
   render() {
     const { isBtnDisabled, nameInput, isLoading, isRedirect } = this.state;
     if (isLoading) return <Loading />;
+    if (isRedirect) return <Redirect to="/search" />;
     return (
       <div data-testid="page-login">
         <label htmlFor="nameInput">
@@ -70,7 +72,6 @@ class Login extends React.Component {
 
         </button>
 
-        {isRedirect && <Redirect to="/search" />}
       </div>
     );
   }

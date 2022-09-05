@@ -4,13 +4,10 @@ import Loading from '../pages/Loading';
 import { getUser } from '../services/userAPI';
 
 export default class Header extends Component {
-  constructor() {
-    super();
-    this.state = {
-      receivedName: '',
-      isLoading: true,
-    };
-  }
+  state = {
+    receivedName: '',
+    isLoading: true,
+  };
 
   async componentDidMount() {
     const user = await getUser();
@@ -25,12 +22,14 @@ export default class Header extends Component {
     if (isLoading) return <Loading />;
     return (
       <header data-testid="header-component">
-        <p data-testid="header-user-name">
+        <span data-testid="header-user-name">
           {receivedName}
-        </p>
-        <Link to="/search" data-testid="link-to-search">Search</Link>
-        <Link to="/favorites" data-testid="link-to-favorites">Favorites</Link>
-        <Link to="/profile" data-testid="link-to-profile">Profile</Link>
+        </span>
+        <div>
+          <Link to="/search" data-testid="link-to-search">Search</Link>
+          <Link to="/favorites" data-testid="link-to-favorites">Favorites</Link>
+          <Link to="/profile" data-testid="link-to-profile">Profile</Link>
+        </div>
       </header>
     );
   }
