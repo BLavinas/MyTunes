@@ -9,7 +9,7 @@ class Album extends React.Component {
     receivedMusics: [],
     receivedBand: '',
     receivedAlbum: '',
-    receveidCover: '',
+    receivedCover: '',
   };
 
   async componentDidMount() {
@@ -38,9 +38,11 @@ class Album extends React.Component {
         </div>
         {receivedMusics.map((music) => (
           <MusicCard
+            music={ music }
             key={ music.trackId }
             trackName={ music.trackName }
             previewUrl={ music.previewUrl }
+            trackId={ music.trackId }
           />))}
 
       </div>
